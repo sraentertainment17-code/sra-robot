@@ -1,0 +1,11 @@
+# Secrets — never commit
+config.yaml
+*.env
+.env
+captures/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.DS_Store

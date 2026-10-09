@@ -1,0 +1,58 @@
+{
+  "robot_name": "SRA Robot",
+  "version": "2.0",
+  "brain": {
+    "model": "glm-5.2",
+    "provider": "ollama-cloud",
+    "base_url": "https://ollama.com/v1",
+    "max_tokens": 800,
+    "temperature": 0.8
+  },
+  "voice": {
+    "engine": "edge-tts",
+    "voice": "en-US-AndrewMultilingualNeural",
+    "rate": "+15%"
+  },
+  "hearing": {
+    "engine": "whisper",
+    "model": "tiny",
+    "language": "en",
+    "sample_rate": 16000,
+    "silence_threshold": 0.015,
+    "silence_duration_seconds": 1.5,
+    "max_record_seconds": 8
+  },
+  "motors": {
+    "driver": "L298N",
+    "motor_count": 4,
+    "gpio_pins": {
+      "ena": 12,
+      "in1": 17,
+      "in2": 27,
+      "in3": 22,
+      "in4": 23,
+      "enb": 13
+    },
+    "default_speed": 50,
+    "pwm_frequency": 1000
+  },
+  "vision": {
+    "camera": "Pi Camera Module 3",
+    "resolution": "640x480",
+    "face_detection": true,
+    "capture_dir": "~/ai-robot/captures"
+  },
+  "power": {
+    "battery_type": "LiFePO4 12V",
+    "battery_count": 3,
+    "battery_wiring": "parallel",
+    "buck_converter": "12V to 5V 5A",
+    "pi_power": "USB-C 5V 5A"
+  },
+  "personality": {
+    "name": "SRA Robot",
+    "style": "warm, curious, energetic, playful",
+    "language": "short conversational sentences",
+    "identity": "a robot, not a chatbot"
+  }
+}

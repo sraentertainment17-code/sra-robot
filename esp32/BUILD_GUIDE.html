@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SRA Robot — Step-by-Step Build Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #020617; color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 40px 20px; max-width: 1000px; margin: 0 auto;
+  }
+  .header { text-align: center; padding: 30px 0 40px; border-bottom: 1px solid #1e293b; margin-bottom: 40px; }
+  .header h1 { font-size: 28px; letter-spacing: 1px; color: #22d3ee; }
+  .header .sub { font-size: 12px; color: #64748b; margin-top: 10px; }
+  .pulse { display: inline-block; width: 10px; height: 10px; background: #34d399; border-radius: 50%; margin-right: 10px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% {opacity:1} 50% {opacity:0.3} }
+  .step {
+    background: #0f172a; border: 1px solid #1e293b; border-radius: 12px;
+    padding: 30px; margin-bottom: 50px;
+  }
+  .step-num { font-size: 11px; color: #64748b; letter-spacing: 3px; text-transform: uppercase; }
+  .step h2 { font-size: 20px; color: #e2e8f0; margin: 8px 0 6px; }
+  .step .goal { font-size: 12px; color: #34d399; margin-bottom: 20px; }
+  .parts { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+  .chip { background: rgba(34,211,238,0.08); border: 1px solid #22d3ee; border-radius: 6px; padding: 6px 12px; font-size: 11px; color: #22d3ee; }
+  .diagram { background: #020617; border: 1px solid #1e293b; border-radius: 8px; padding: 10px; margin: 20px 0; }
+  .diagram svg { width: 100%; height: auto; display: block; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { text-align: left; color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; padding: 8px; border-bottom: 1px solid #1e293b; }
+  td { padding: 8px; border-bottom: 1px solid #1e293b; color: #cbd5e1; }
+  .check { background: rgba(52,211,153,0.06); border-left: 3px solid #34d399; padding: 14px 18px; border-radius: 0 6px 6px 0; margin: 18px 0; }
+  .check .label { color: #34d399; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+  .check p { font-size: 12px; margin-top: 6px; color: #94a3b8; line-height: 1.7; }
+  .trouble { background: rgba(251,191,36,0.05); border-left: 3px solid #fbbf24; padding: 14px 18px; border-radius: 0 6px 6px 0; margin: 18px 0; }
+  .trouble .label { color: #fbbf24; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+  .trouble p { font-size: 12px; margin-top: 6px; color: #94a3b8; line-height: 1.7; }
+  .wl { font-size: 10px; fill: #94a3b8; }
+  .pinlbl { font-size: 10px; fill: #e2e8f0; font-weight: 600; }
+  .modlbl { font-size: 11px; fill: #e2e8f0; font-weight: 700; }
+  .sublbl { font-size: 8px; fill: #64748b; }
+  .wirelbl { font-size: 9px; font-weight: 700; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 50px; }
+  .card { background: #0f172a; border: 1px solid #1e293b; border-radius: 10px; padding: 20px; }
+  .card h3 { font-size: 12px; color: #e2e8f0; margin-bottom: 10px; }
+  .card ul { list-style: none; }
+  .card li { font-size: 11px; color: #94a3b8; line-height: 2; }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 10px; }
+  .footer { text-align: center; font-size: 10px; color: #334155; padding: 30px 0; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><span class="pulse"></span><h1>SRA ROBOT — VOICE BUILD</h1></div>
+  <div class="sub">ESP32-S3 N16R8 · INMP441 MIC · MAX98357 AMP · NO SOLDERING · 4 STEPS TO A TALKING ROBOT</div>
+</div>
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-num">STEP 1 / 4</div>
+  <h2>Bring the Brain Online</h2>
+  <div class="goal">GOAL: board answers code over USB — proof of life. No wiring yet.</div>
+  <div class="parts">
+    <div class="chip">1× Hosyond ESP32-S3</div>
+    <div class="chip">USB-C data cable</div>
+    <div class="chip">Mac mini</div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 900 340">
+      <defs>
+        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+        </pattern>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+        </marker>
+      </defs>
+      <rect width="900" height="340" fill="url(#grid)"/>
+
+      <!-- Mac mini -->
+      <rect x="60" y="110" width="180" height="110" rx="12" fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+      <text x="150" y="155" text-anchor="middle" class="modlbl">MAC MINI</text>
+      <text x="150" y="175" text-anchor="middle" class="sublbl">hermes agent lives here</text>
+      <rect x="230" y="155" width="10" height="6" rx="2" fill="#334155"/>
+
+      <!-- USB cable -->
+      <path d="M 240 158 C 340 158, 360 160, 420 160" fill="none" stroke="#22d3ee" stroke-width="5"/>
+      <text x="330" y="140" text-anchor="middle" class="wl" fill="#22d3ee">USB-C DATA CABLE (not charge-only!)</text>
+
+      <!-- ESP32 board vertical -->
+      <rect x="420" y="60" width="150" height="240" rx="8" fill="#0f172a" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="495" y="90" text-anchor="middle" class="modlbl">ESP32-S3</text>
+      <text x="495" y="108" text-anchor="middle" class="sublbl">N16R8 · Hosyond</text>
+      <rect x="480" y="150" width="30" height="30" rx="4" fill="none" stroke="#334155"/>
+      <text x="495" y="170" text-anchor="middle" class="sublbl">MCU</text>
+      <!-- boot button -->
+      <circle cx="495" cy="250" r="12" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+      <text x="495" y="254" text-anchor="middle" class="sublbl" fill="#fbbf24">BOOT</text>
+      <text x="600" y="240" class="wl" fill="#fbbf24">hold BOOT while plugging in</text>
+      <text x="600" y="256" class="wl" fill="#fbbf24">ONLY if Mac doesn't detect board</text>
+      <path d="M 507 246 L 595 240" stroke="#fbbf24" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+
+      <!-- terminal -->
+      <rect x="620" y="60" width="240" height="130" rx="6" fill="#010409" stroke="#1e293b"/>
+      <text x="635" y="85" class="wl" fill="#34d399">=== SRA Robot Brain Online ===</text>
+      <text x="635" y="105" class="wl" fill="#34d399">alive 0</text>
+      <text x="635" y="120" class="wl" fill="#34d399">alive 1</text>
+      <text x="635" y="135" class="wl" fill="#34d399">alive 2 ...</text>
+      <text x="635" y="160" class="sublbl">serial monitor · 115200 baud</text>
+      <path d="M 573 130 C 590 130, 600 120, 618 110" stroke="#34d399" stroke-width="1" fill="none" marker-end="url(#arrow)"/>
+      <text x="700" y="220" class="wl">you should see this scrolling 1/sec</text>
+    </svg>
+  </div>
+  <div class="check">
+    <div class="label">What you should see</div>
+    <p>Board's power LED lights up. Serial monitor prints "SRA Robot Brain Online" then "alive 0, alive 1..." once per second. That's your first robotics milestone — code → board → proof of life. ✅ I already compiled this sketch, you just plug in and tell me.</p>
+  </div>
+  <div class="trouble">
+    <div class="label">Troubleshooting</div>
+    <p>• Nothing in serial monitor? Check baud is 115200 • Board not detected? Hold BOOT while plugging • Still nothing? The cable is charge-only — try another USB-C cable. 2 spare boards are in the box if one is dead.</p>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-num">STEP 2 / 4</div>
+  <h2>Give It a Mouth</h2>
+  <div class="goal">GOAL: the robot makes its first sound. Wire the amp + speaker, flash the beep sketch.</div>
+  <div class="parts">
+    <div class="chip">ESP32-S3 (still on USB)</div>
+    <div class="chip">1× MAX98357 amp</div>
+    <div class="chip">1× speaker (4Ω 3W)</div>
+    <div class="chip">2 jumper wires (speaker)</div>
+    <div class="chip">5 jumpers (board→amp)</div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 900 620">
+      <rect width="900" height="620" fill="url(#grid)"/>
+
+      <!-- ESP32 board -->
+      <rect x="330" y="40" width="150" height="420" rx="8" fill="#0f172a" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="405" y="70" text-anchor="middle" class="modlbl">ESP32-S3</text>
+      <!-- left pins -->
+      <text x="322" y="120" text-anchor="end" class="pinlbl">GPIO15</text>
+      <text x="322" y="170" text-anchor="end" class="pinlbl">GPIO16</text>
+      <text x="322" y="220" text-anchor="end" class="pinlbl">GPIO7</text>
+      <text x="322" y="270" text-anchor="end" class="pinlbl">GPIO6</text>
+      <!-- right pins -->
+      <text x="488" y="120" class="pinlbl">5V</text>
+      <text x="488" y="170" class="pinlbl">GND</text>
+      <text x="488" y="270" class="pinlbl">3V3</text>
+      <text x="488" y="220" class="pinlbl">GPIO4</text>
+      <text x="488" y="320" class="pinlbl">GPIO5</text>
+      <circle cx="330" cy="116" r="5" fill="#fbbf24"/>
+      <circle cx="330" cy="166" r="5" fill="#38bdf8"/>
+      <circle cx="330" cy="216" r="5" fill="#34d399"/>
+      <circle cx="330" cy="266" r="5" fill="#475569"/>
+      <circle cx="480" cy="116" r="5" fill="#ef4444"/>
+      <circle cx="480" cy="166" r="5" fill="#0f172a" stroke="#e2e8f0"/>
+      <circle cx="480" cy="216" r="5" fill="#475569"/>
+
+      <!-- MAX98357 -->
+      <rect x="620" y="180" width="200" height="150" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="720" y="210" text-anchor="middle" class="modlbl">MAX98357</text>
+      <text x="720" y="226" text-anchor="middle" class="sublbl">I2S amplifier 3W class-D</text>
+      <!-- amp pins bottom row -->
+      <text x="640" y="310" text-anchor="middle" class="pinlbl" fill="#ef4444">VIN</text>
+      <text x="680" y="310" text-anchor="middle" class="pinlbl">GND</text>
+      <text x="720" y="310" text-anchor="middle" class="pinlbl">DIN</text>
+      <text x="760" y="310" text-anchor="middle" class="pinlbl">BCLK</text>
+      <text x="800" y="310" text-anchor="middle" class="pinlbl">LRC</text>
+      <circle cx="640" cy="330" r="5" fill="#ef4444"/>
+      <circle cx="680" cy="330" r="5" fill="#0f172a" stroke="#e2e8f0"/>
+      <circle cx="720" cy="330" r="5" fill="#34d399"/>
+      <circle cx="760" cy="330" r="5" fill="#fbbf24"/>
+      <circle cx="800" cy="330" r="5" fill="#38bdf8"/>
+
+      <!-- Wires ESP -> amp -->
+      <!-- 5V red: right side 5V pin -> VIN -->
+      <path d="M 480 116 C 560 116, 580 260, 640 330" fill="none" stroke="#ef4444" stroke-width="4"/>
+      <text x="560" y="150" class="wirelbl" fill="#ef4444">5V power (red)</text>
+      <!-- GND -->
+      <path d="M 480 166 C 550 166, 600 280, 680 330" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+      <text x="560" y="190" class="wirelbl" fill="#e2e8f0">GND (black)</text>
+      <!-- DIN green: GPIO7 left -> DIN -->
+      <path d="M 330 216 C 470 216, 600 260, 720 330" fill="none" stroke="#34d399" stroke-width="4"/>
+      <text x="470" y="245" class="wirelbl" fill="#34d399">DIN — data (green)</text>
+      <!-- BCLK yellow: GPIO15 -> BCLK -->
+      <path d="M 330 116 C 480 116, 660 240, 760 330" fill="none" stroke="#fbbf24" stroke-width="4"/>
+      <text x="500" y="120" class="wirelbl" fill="#fbbf24">BCLK — bit clock (yellow)</text>
+      <!-- LRC blue: GPIO16 -> LRC -->
+      <path d="M 330 166 C 500 166, 700 230, 800 330" fill="none" stroke="#38bdf8" stroke-width="4"/>
+      <text x="505" y="165" class="wirelbl" fill="#38bdf8">LRC — left/right clock (blue)</text>
+
+      <!-- Speaker -->
+      <circle cx="720" cy="470" r="55" fill="rgba(120,53,15,0.3)" stroke="#fb923c" stroke-width="1.5"/>
+      <circle cx="720" cy="470" r="20" fill="none" stroke="#fb923c" stroke-width="1"/>
+      <text x="720" y="545" text-anchor="middle" class="sublbl">SPEAKER 4Ω 3W</text>
+      <!-- speaker wires -->
+      <path d="M 690 330 C 660 400, 690 420, 700 418" fill="none" stroke="#fb923c" stroke-width="3"/>
+      <path d="M 750 330 C 780 400, 750 420, 745 418" fill="none" stroke="#94a3b8" stroke-width="3"/>
+      <text x="830" y="390" class="wl">amp screw terminals</text>
+      <text x="830" y="405" class="wl">→ speaker wires</text>
+      <text x="830" y="420" class="wl">(strip &amp; screw in — no solder)</text>
+
+      <!-- SD pin note -->
+      <text x="620" y="360" class="sublbl">SD (gain) pin: leave unconnected — default volume is right</text>
+    </svg>
+  </div>
+  <table>
+    <tr><th>FROM ESP32-S3</th><th>TO MAX98357</th><th>WIRE COLOR</th><th>WHAT IT DOES</th></tr>
+    <tr><td>5V</td><td>VIN</td><td style="color:#ef4444">red</td><td>Power — 5V is louder than 3V3</td></tr>
+    <tr><td>GND</td><td>GND</td><td>black</td><td>Common ground</td></tr>
+    <tr><td>GPIO15</td><td>BCLK</td><td style="color:#fbbf24">yellow</td><td>Bit clock (I2S1)</td></tr>
+    <tr><td>GPIO16</td><td>LRC</td><td style="color:#38bdf8">blue</td><td>Left/right clock</td></tr>
+    <tr><td>GPIO7</td><td>DIN</td><td style="color:#34d399">green</td><td>Audio data to amp</td></tr>
+  </table>
+  <div class="check">
+    <div class="label">What you should hear</div>
+    <p>A rising two-tone beep every 2 seconds from the speaker. That's the robot's first voice. 🔊 Tell me when wired and I'll flash the beep sketch.</p>
+  </div>
+  <div class="trouble">
+    <div class="label">Troubleshooting</div>
+    <p>• No sound? Check 5V/GND first — 90% of audio failures are power • Quiet? Speaker wires loose in screw terminals — tighten • Buzzing? Move the speaker wires away from the I2S wires.</p>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-num">STEP 3 / 4</div>
+  <h2>Give It Ears</h2>
+  <div class="goal">GOAL: robot hears you. Wire the INMP441 mic, flash the record→playback sketch. Say a word, hear it repeated.</div>
+  <div class="parts">
+    <div class="chip">ESP32-S3 (amp still wired)</div>
+    <div class="chip">1× INMP441 mic</div>
+    <div class="chip">5 jumpers</div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 900 620">
+      <rect width="900" height="620" fill="url(#grid)"/>
+
+      <!-- ESP32 board (same pin map) -->
+      <rect x="420" y="40" width="150" height="420" rx="8" fill="#0f172a" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="495" y="70" text-anchor="middle" class="modlbl">ESP32-S3</text>
+      <text x="412" y="120" text-anchor="end" class="pinlbl">GPIO4</text>
+      <text x="412" y="170" text-anchor="end" class="pinlbl">GPIO5</text>
+      <text x="412" y="220" text-anchor="end" class="pinlbl">GPIO6</text>
+      <text x="488" y="120" class="pinlbl">3V3</text>
+      <text x="488" y="220" class="pinlbl">GND</text>
+      <circle cx="420" cy="116" r="5" fill="#fbbf24"/>
+      <circle cx="420" cy="166" r="5" fill="#38bdf8"/>
+      <circle cx="420" cy="216" r="5" fill="#34d399"/>
+      <circle cx="570" cy="116" r="5" fill="#ef4444"/>
+      <circle cx="570" cy="216" r="5" fill="#0f172a" stroke="#e2e8f0"/>
+
+      <!-- INMP441 -->
+      <rect x="80" y="180" width="200" height="150" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="180" y="210" text-anchor="middle" class="modlbl">INMP441</text>
+      <text x="180" y="226" text-anchor="middle" class="sublbl">I2S MEMS microphone</text>
+      <circle cx="180" cy="180" r="14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="180" y="184" text-anchor="middle" class="sublbl">MIC</text>
+      <!-- pins bottom -->
+      <text x="100" y="310" text-anchor="middle" class="pinlbl">VDD</text>
+      <text x="133" y="310" text-anchor="middle" class="pinlbl">GND</text>
+      <text x="166" y="310" text-anchor="middle" class="pinlbl">L/R</text>
+      <text x="199" y="310" text-anchor="middle" class="pinlbl">WS</text>
+      <text x="232" y="310" text-anchor="middle" class="pinlbl">SCK</text>
+      <text x="265" y="310" text-anchor="middle" class="pinlbl">SD</text>
+      <circle cx="100" cy="330" r="5" fill="#ef4444"/>
+      <circle cx="133" cy="330" r="5" fill="#0f172a" stroke="#e2e8f0"/>
+      <circle cx="166" cy="330" r="5" fill="#0f172a" stroke="#e2e8f0"/>
+      <circle cx="199" cy="330" r="5" fill="#38bdf8"/>
+      <circle cx="232" cy="330" r="5" fill="#fbbf24"/>
+      <circle cx="265" cy="330" r="5" fill="#34d399"/>
+
+      <!-- L/R to GND jumper note -->
+      <path d="M 133 350 C 145 380, 155 380, 166 352" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3,3"/>
+      <text x="140" y="395" class="sublbl">tiny jumper: L/R → GND (left channel mode)</text>
+
+      <!-- Wires mic -> ESP -->
+      <!-- VDD red -->
+      <path d="M 100 330 C 200 420, 500 320, 570 116" fill="none" stroke="#ef4444" stroke-width="4"/>
+      <text x="330" y="400" class="wirelbl" fill="#ef4444">3V3 → VDD (red)</text>
+      <!-- GND -->
+      <path d="M 133 330 C 250 430, 480 340, 570 216" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+      <text x="290" y="445" class="wirelbl" fill="#e2e8f0">GND → GND (black)</text>
+      <!-- SCK yellow GPIO4 -->
+      <path d="M 232 330 C 300 300, 350 200, 420 116" fill="none" stroke="#fbbf24" stroke-width="4"/>
+      <text x="300" y="280" class="wirelbl" fill="#fbbf24">GPIO4 → SCK (yellow) bit clock</text>
+      <!-- WS blue GPIO5 -->
+      <path d="M 199 330 C 290 310, 350 220, 420 166" fill="none" stroke="#38bdf8" stroke-width="4"/>
+      <text x="255" y="320" class="wirelbl" fill="#38bdf8">GPIO5 → WS (blue) word select</text>
+      <!-- SD green GPIO6 -->
+      <path d="M 265 330 C 330 340, 360 260, 420 216" fill="none" stroke="#34d399" stroke-width="4"/>
+      <text x="320" y="370" class="wirelbl" fill="#34d399">GPIO6 → SD (green) mic data</text>
+
+      <text x="495" y="490" text-anchor="middle" class="wl">mic on I2S0 · amp on I2S1 — both work together</text>
+      <text x="495" y="510" text-anchor="middle" class="sublbl">keep mic wires SHORT — long wires = robot screech</text>
+    </svg>
+  </div>
+  <table>
+    <tr><th>FROM ESP32-S3</th><th>TO INMP441</th><th>WIRE COLOR</th><th>WHAT IT DOES</th></tr>
+    <tr><td>3V3</td><td>VDD</td><td style="color:#ef4444">red</td><td>Mic power — 3.3V ONLY (5V kills it!)</td></tr>
+    <tr><td>GND</td><td>GND</td><td>black</td><td>Common ground</td></tr>
+    <tr><td>GND</td><td>L/R</td><td>black</td><td>Left-channel mode (required)</td></tr>
+    <tr><td>GPIO4</td><td>SCK</td><td style="color:#fbbf24">yellow</td><td>Bit clock (I2S0)</td></tr>
+    <tr><td>GPIO5</td><td>WS</td><td style="color:#38bdf8">blue</td><td>Word select</td></tr>
+    <tr><td>GPIO6</td><td>SD</td><td style="color:#34d399">green</td><td>Mic data in</td></tr>
+  </table>
+  <div class="check">
+    <div class="label">What you should experience</div>
+    <p>Say something when the LED is on — 2 seconds later the speaker repeats your own voice. Ear-to-mouth loop closed. 🎤</p>
+  </div>
+  <div class="trouble">
+    <div class="label">Troubleshooting</div>
+    <p>• Screeching/garbage audio = mic wiring too long or loose — press jumpers firm, shorten wires • Silence? Check L/R is jumpered to GND • Never connect VDD to 5V — the INMP441 is 3.3V only.</p>
+  </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+  <div class="step-num">STEP 4 / 4</div>
+  <h2>Make It a Robot</h2>
+  <div class="goal">GOAL: mount everything on the breadboard, flash the Wi-Fi brain — mic → Hermes on Mac mini → GLM → speaker. IT TALKS.</div>
+  <div class="parts">
+    <div class="chip">830-point breadboard</div>
+    <div class="chip">All wired parts from steps 2-3</div>
+    <div class="chip">Wi-Fi credentials</div>
+  </div>
+  <div class="diagram">
+    <svg viewBox="0 0 900 640">
+      <rect width="900" height="640" fill="url(#grid)"/>
+
+      <!-- breadboard -->
+      <rect x="60" y="120" width="780" height="380" rx="8" fill="#1a1333" stroke="#a78bfa" stroke-width="1.5"/>
+      <rect x="80" y="160" width="740" height="12" fill="#0f172a"/>
+      <rect x="80" y="176" width="740" height="12" fill="#0f172a"/>
+      <text x="450" y="155" text-anchor="middle" class="sublbl" fill="#ef4444">+ RAIL (red line)</text>
+      <rect x="80" y="440" width="740" height="12" fill="#0f172a"/>
+      <rect x="80" y="456" width="740" height="12" fill="#0f172a"/>
+      <text x="450" y="448" text-anchor="middle" class="sublbl">− RAIL (blue line)</text>
+      <!-- tie points hint -->
+      <g opacity="0.25">
+        <rect x="100" y="200" width="700" height="220" fill="none" stroke="#334155" stroke-width="0.5"/>
+        <path d="M 100 200 h 700 M 100 230 h 700 M 100 260 h 700 M 100 290 h 700 M 100 320 h 700 M 100 350 h 700 M 100 380 h 700 M 100 410 h 700" stroke="#334155" stroke-width="0.3"/>
+      </g>
+
+      <!-- ESP32 straddling center channel -->
+      <rect x="380" y="210" width="140" height="200" rx="6" fill="#0f172a" stroke="#22d3ee" stroke-width="1.5"/>
+      <text x="450" y="235" text-anchor="middle" class="modlbl">ESP32-S3</text>
+      <text x="450" y="252" text-anchor="middle" class="sublbl">straddles the center channel</text>
+      <text x="450" y="300" text-anchor="middle" class="wl">pins drop into row f one side,</text>
+      <text x="450" y="315" text-anchor="middle" class="wl">row j the other — push firmly</text>
+
+      <!-- mic module left on board -->
+      <rect x="120" y="230" width="130" height="100" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
+      <text x="185" y="260" text-anchor="middle" class="modlbl">INMP441</text>
+      <text x="185" y="278" text-anchor="middle" class="sublbl">mic faces outward</text>
+      <text x="185" y="296" text-anchor="middle" class="sublbl">(away from speaker!)</text>
+
+      <!-- amp module right on board -->
+      <rect x="650" y="230" width="130" height="100" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.5"/>
+      <text x="715" y="260" text-anchor="middle" class="modlbl">MAX98357</text>
+      <text x="715" y="278" text-anchor="middle" class="sublbl">amp + speaker out</text>
+
+      <!-- speaker beside -->
+      <circle cx="780" cy="540" r="45" fill="rgba(120,53,15,0.3)" stroke="#fb923c" stroke-width="1.5"/>
+      <text x="780" y="600" text-anchor="middle" class="sublbl">speaker</text>
+
+      <!-- wiring arrows to rails -->
+      <path d="M 185 330 C 185 420, 300 445, 395 448" fill="none" stroke="#ef4444" stroke-width="3"/>
+      <path d="M 715 330 C 715 420, 600 445, 505 448" fill="none" stroke="#ef4444" stroke-width="3"/>
+      <text x="300" y="430" class="wl" fill="#ef4444">power from rails: jump 3V3 &amp; GND from ESP32 pins to +/− rails</text>
+      <text x="450" y="540" text-anchor="middle" class="wl">same pin map as steps 2-3 — wires now run along breadboard channels (short &amp; clean)</text>
+      <text x="450" y="560" text-anchor="middle" class="sublbl">use the 2nd 830 board for your spare ESP32 later — kitchen satellite 🛰️</text>
+    </svg>
+  </div>
+  <div class="check">
+    <div class="label">What you should experience</div>
+    <p>Say "Hey robot" → it records → Wi-Fi sends audio to your Mac mini's Hermes → GLM thinks → the speaker answers in Andrew's voice. The thin-body/big-brain architecture is ALIVE. Same pattern the PiDog will use — nothing here gets wasted.</p>
+  </div>
+  <div class="trouble">
+    <div class="label">Rules that keep it clean</div>
+    <p>• Mic faces AWAY from the speaker (feedback loop) • Keep mic jumpers under 10cm • Power everything from the rails, never daisy-chained • USB cable can stay connected for debugging — Wi-Fi and USB work together.</p>
+  </div>
+</div>
+
+<!-- Pin map reference -->
+<div class="cards">
+  <div class="card">
+    <h3><span class="dot" style="background:#22d3ee"></span>MASTER PIN MAP</h3>
+    <ul>
+      <li>MIC&nbsp; SCK → GPIO4 &nbsp;·&nbsp; WS → GPIO5 &nbsp;·&nbsp; SD → GPIO6</li>
+      <li>MIC&nbsp; VDD → 3V3 &nbsp;·&nbsp; L/R → GND &nbsp;·&nbsp; GND → GND</li>
+      <li>AMP&nbsp; BCLK → GPIO15 &nbsp;·&nbsp; LRC → GPIO16 &nbsp;·&nbsp; DIN → GPIO7</li>
+      <li>AMP&nbsp; VIN → 5V &nbsp;·&nbsp; GND → GND &nbsp;·&nbsp; SD: unconnected</li>
+      <li>I2S0 = mic &nbsp;·&nbsp; I2S1 = speaker &nbsp;·&nbsp; 16MB flash &nbsp;·&nbsp; 8MB PSRAM</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3><span class="dot" style="background:#34d399"></span>SKETCH LADDER (ON YOUR MAC)</h3>
+    <ul>
+      <li>~/ai-robot/esp32/step1_hello — compiled ✅ flash first</li>
+      <li>step2_beep — amp + speaker tone test</li>
+      <li>step3_echo — record mic → play back speaker</li>
+      <li>step4_brain — Wi-Fi bridge to Hermes on Mac mini</li>
+      <li>Board: esp32:esp32:esp32s3 · monitor: 115200 baud</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3><span class="dot" style="background:#fbbf24"></span>GOLDEN RULES</h3>
+    <ul>
+      <li>INMP441 is 3.3V ONLY — 5V destroys it</li>
+      <li>MAX98357 takes 5V (louder) or 3V3 (quieter)</li>
+      <li>Unplug USB before changing any wire</li>
+      <li>Boot button = hold while plugging IF board undetected</li>
+      <li>2 spare boards + 4 spare mics + 1 spare amp = zero fear</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">SRA ROBOT · ESP32-S3 VOICE BUILD GUIDE · GENERATED BY HERMES · v1.0</div>
+
+</body>
+</html>
