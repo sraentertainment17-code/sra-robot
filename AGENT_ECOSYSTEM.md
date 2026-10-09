@@ -6,7 +6,7 @@
 ┌─────────────────────────────────────────────────────────┐
 │                    YOUR PHONE (Telegram)                 │
 │                                                         │
-│  @Sra_hermes_bot    @Sra_robot_dog_bot   @Sra_debug_bot │
+│  @your_hermes_bot    @your_robot_bot      @your_debug_bot │
 │  (Mac mini brain)   (Robot brain)        (Robot health)  │
 └──────┬──────────────────┬──────────────────┬────────────┘
        │                  │                  │

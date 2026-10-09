@@ -561,7 +561,7 @@ def main():
     if HAS_PERSONALITY:
         speak(personality.get_greeting())
     else:
-        speak("Hello Sut! I'm your robot. I can hear you, see you, and move around. What should we do?")
+        speak("Hello! I'm your robot. I can hear you, see you, and move around. What should we do?")
 
     while True:
         try:
@@ -577,7 +577,7 @@ def main():
 
             # Check for exit
             if text.lower().strip() in ["exit", "quit", "bye", "goodbye", "shut down"]:
-                speak("Goodbye Sut. I'll be here when you need me.")
+                speak("Goodbye! I'll be here when you need me.")
                 break
 
             # 2. PERSONALITY SWITCH CHECK

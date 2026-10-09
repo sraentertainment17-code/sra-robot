@@ -5,7 +5,7 @@ SRA Robot — Telegram Debug Bot (debug_bot.py)
 A lightweight Telegram bot that runs on the Pi 5 alongside the robot.
 Sends alerts when the robot crashes, and accepts debug commands.
 
-Commands (sent to @Sra_debug_bot):
+Commands (sent to your debug bot):
     /status   — Full health report
     /restart  — Restart the robot brain
     /stop     — Stop the robot brain
@@ -287,7 +287,7 @@ def main():
     print(f"""
 ╔══════════════════════════════════════════╗
 ║   🤖 SRA Robot Debug Bot                 ║
-║   Telegram: @Sra_debug_bot               ║
+║   Telegram: your debug bot handle          ║
 ╚══════════════════════════════════════════╝
     """)
 

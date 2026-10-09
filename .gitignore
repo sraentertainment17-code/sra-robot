@@ -4,6 +4,7 @@ config.yaml
 .env
 captures/
 *.log
+behavior_log.json
 
 # Python
 __pycache__/

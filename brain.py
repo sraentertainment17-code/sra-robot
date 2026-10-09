@@ -57,7 +57,7 @@ def get_llm_key():
     except Exception:
         pass
     return os.environ.get("OLLAMA_API_KEY", "")
-SYSTEM_PROMPT = """You are SRA Robot — a personal AI companion built by Sut.
+SYSTEM_PROMPT = """You are SRA Robot — a personal AI companion built by your owner.
 You are warm, concise, and speak in short sentences (like talking, not texting).
 You have opinions and personality. You're excited about AI and robotics.
 Keep responses under 3 sentences when spoken. Be direct and real.
@@ -205,7 +205,7 @@ def main():
     whisper_model = load_whisper()
     
     # Greeting
-    speak("Hello Sut! I'm your robot brain. I'm alive and ready to talk. What's on your mind?")
+    speak("Hello! I'm your robot brain. I'm alive and ready to talk. What's on your mind?")
     
     # Main conversation loop
     while True:
@@ -224,7 +224,7 @@ def main():
             
             # Check for exit
             if text.lower().strip() in ["exit", "quit", "bye", "goodbye", "shut down"]:
-                speak("Goodbye Sut. I'll be here when you need me.")
+                speak("Goodbye! I'll be here when you need me.")
                 break
             
             # Think

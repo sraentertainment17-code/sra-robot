@@ -1,0 +1,20 @@
+[
+  {
+    "action": "dance",
+    "context": "music playing",
+    "reward": "good boy",
+    "timestamp": "2026-01-01T12:00:00.000000"
+  },
+  {
+    "action": "bark",
+    "context": "doorbell rang",
+    "reward": "good boy",
+    "timestamp": "2026-01-01T12:05:00.000000"
+  },
+  {
+    "action": "jump",
+    "context": null,
+    "reward": "stop that",
+    "timestamp": "2026-01-01T12:10:00.000000"
+  }
+]
