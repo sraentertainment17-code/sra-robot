@@ -368,7 +368,7 @@ SCHEDULE = {
 
 ### GitHub Repository Structure
 ```
-github.com/sutringaung/sra-robot-dog
+github.com/YOUR_USERNAME/sra-robot
 │
 ├── README.md                  ← "Build your own AI robot dog with Hermes"
 ├── robot_brain.py             ← Main brain (hear → think → speak → move)
